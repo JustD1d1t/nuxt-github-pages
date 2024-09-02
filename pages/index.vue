@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'nuxt/app';
-import { useAxios } from 'composables/axios';
+import axios from "axios"
 
 const isLoading = ref(true);
 const error = ref(null);
@@ -9,7 +9,6 @@ const success = ref(false);
 
 const route = useRoute();
 const router = useRouter();
-const axios = useAxios();
 
 onMounted(async () => {
   const oobCode = route.query.oobCode;
