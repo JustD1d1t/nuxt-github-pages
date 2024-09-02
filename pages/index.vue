@@ -1,9 +1,41 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'nuxt/app';
+import { useAxios } from 'composables/axios';
+
+const isLoading = ref(true);
+const error = ref(null);
+const success = ref(false);
+
+const route = useRoute();
+const router = useRouter();
+const axios = useAxios();
+
+onMounted(async () => {
+  const oobCode = route.query.oobCode;
+
+  if (oobCode) {
+    try {
+      // Wyślij `oobCode` do backendu
+      const response = await axios.post('https://fo-mobile-backend-6c319973e933.herokuapp.com/user/verify-email', { oobCode });
+      success.value = response.data.success;
+    } catch (err) {
+      error.value = 'Błąd podczas weryfikacji e-maila. Spróbuj ponownie później.';
+      console.error(err);
+    } finally {
+      isLoading.value = false;
+    }
+  } else {
+    error.value = 'Nieprawidłowy kod weryfikacyjny.';
+    isLoading.value = false;
+  }
+});
+</script>
 <template>
-  <main>
-    <div>
-      <h1>Home</h1>
-      <NuxtLink to="/about">About</NuxtLink>
-    </div>
-    <img src="/qingbao-meng-01_igFr7hd4-unsplash.jpg" loading="lazy">
-  </main>
+  <div>
+    <h1>Weryfikacja adresu e-mail</h1>
+    <div v-if="isLoading">Trwa weryfikacja...</div>
+    <div v-if="error">{{ error }}</div>
+    <div v-if="success">Adres e-mail został zweryfikowany pomyślnie!</div>
+  </div>
 </template>

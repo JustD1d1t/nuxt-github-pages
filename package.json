@@ -6,10 +6,10 @@
     "generate": "nuxi generate",
     "preview": "nuxi preview",
     "postinstall": "nuxi prepare",
-    "deploy": "gh-pages --dotfiles -d .output/public"
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "gh-pages": "^4.0.0",
-    "nuxt": "^3.1.2"
+    "nuxt": "^3.11.1"
   }
 }
