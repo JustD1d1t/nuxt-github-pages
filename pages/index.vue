@@ -9,32 +9,65 @@ const success = ref(false);
 
 const route = useRoute();
 const router = useRouter();
+const incomeMode = ref(null);
 
-onMounted(async () => {
-  const oobCode = route.query.oobCode;
+const password = ref('');
+const confirmPassword = ref('');
 
-  if (oobCode) {
-    try {
-      // Wyślij `oobCode` do backendu
-      const response = await axios.post('https://fo-mobile-backend-6c319973e933.herokuapp.com/user/verify-email', { oobCode });
-      success.value = response.data.success;
-    } catch (err) {
-      error.value = 'Błąd podczas weryfikacji e-maila. Spróbuj ponownie później.';
-      console.error(err);
-    } finally {
-      isLoading.value = false;
-    }
-  } else {
-    error.value = 'Nieprawidłowy kod weryfikacyjny.';
+const sendPassword = async () => {
+  if (password.value !== confirmPassword.value) {
+    error.value = 'Hasła nie są takie same.';
+    return;
+  }
+  try {
+    // Wyślij `oobCode` i `password` do backendu
+    const response = await axios.post('https://fo-mobile-backend-6c319973e933.herokuapp.com/user/reset-password', { oobCode: route.query.oobCode, password: password.value });
+    success.value = response.data.message;
+  } catch (err) {
+    error.value = 'Błąd podczas zmiany hasła. Spróbuj ponownie później.';
+    console.error(err);
+  } finally {
     isLoading.value = false;
   }
+};
+}
+
+onMounted(async () => {
+  const {oobCode, mode} = route.query.oobCode;
+  incomeMode.value = mode;
+  if (mode === 'verifyEmail')  {
+    if (oobCode) {
+      try {
+        // Wyślij `oobCode` do backendu
+        const response = await axios.post('https://fo-mobile-backend-6c319973e933.herokuapp.com/user/verify-email', { oobCode });
+        success.value = response.data.success;
+      } catch (err) {
+        error.value = 'Błąd podczas weryfikacji e-maila. Spróbuj ponownie później.';
+        console.error(err);
+      } finally {
+        isLoading.value = false;
+      }
+    } else {
+      error.value = 'Nieprawidłowy kod weryfikacyjny.';
+      isLoading.value = false;
+    }
+  }
+
 });
 </script>
 <template>
-  <div>
+  <div v-if="incomeMode === 'verifyEmail'">
     <h1>Weryfikacja adresu e-mail</h1>
     <div v-if="isLoading">Trwa weryfikacja...</div>
     <div v-if="error">{{ error }}</div>
     <div v-if="success">Adres e-mail został zweryfikowany pomyślnie!</div>
+  </div>
+  <div v-if="incomeMode === 'resetPassword'">
+    <h1>Zmiana hasła</h1>
+    <input type="password" v-model="password" placeholder="Nowe hasło">
+    <input type="password" v-model="confirmPassword" placeholder="Powtórz hasło">
+    <div v-if="error">{{ error }}</div>
+    <div v-if="success">Hasło zmienione pomyślnie</div>
+    <button>Zmień hasło</button>
   </div>
 </template>
