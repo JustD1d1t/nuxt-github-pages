@@ -30,7 +30,6 @@ const sendPassword = async () => {
     isLoading.value = false;
   }
 };
-}
 
 onMounted(async () => {
   const {oobCode, mode} = route.query.oobCode;
