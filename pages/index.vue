@@ -32,7 +32,7 @@ const sendPassword = async () => {
 };
 
 onMounted(async () => {
-  const {oobCode, mode} = route.query.oobCode;
+  const { oobCode, mode } = route.query;
   incomeMode.value = mode;
   if (mode === 'verifyEmail')  {
     if (oobCode) {
@@ -67,6 +67,6 @@ onMounted(async () => {
     <input type="password" v-model="confirmPassword" placeholder="Powtórz hasło">
     <div v-if="error">{{ error }}</div>
     <div v-if="success">Hasło zmienione pomyślnie</div>
-    <button>Zmień hasło</button>
+    <button @click="sendPassword">Zmień hasło</button>
   </div>
 </template>
