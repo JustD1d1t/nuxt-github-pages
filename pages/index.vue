@@ -14,7 +14,7 @@ const incomeMode = ref(null);
 const password = ref('');
 const confirmPassword = ref('');
 
-const sendPassword = async () => {
+const changePassword = async () => {
   if (password.value !== confirmPassword.value) {
     error.value = 'Hasła nie są takie same.';
     return;
@@ -23,6 +23,7 @@ const sendPassword = async () => {
     // Wyślij `oobCode` i `password` do backendu
     const response = await axios.post('https://fo-mobile-backend-6c319973e933.herokuapp.com/user/reset-password', { oobCode: route.query.oobCode, password: password.value });
     success.value = response.data.message;
+    error.value = '';
   } catch (err) {
     error.value = 'Błąd podczas zmiany hasła. Spróbuj ponownie później.';
     console.error(err);
@@ -67,6 +68,6 @@ onMounted(async () => {
     <input type="password" v-model="confirmPassword" placeholder="Powtórz hasło">
     <div v-if="error">{{ error }}</div>
     <div v-if="success">Hasło zmienione pomyślnie</div>
-    <button @click="sendPassword">Zmień hasło</button>
+    <button @click="() => changePassword()">Zmień hasło</button>
   </div>
 </template>
